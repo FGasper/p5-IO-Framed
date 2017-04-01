@@ -17,6 +17,6 @@ sub new {
     return bless $self, $class;
 }
 
-sub get_output_fh { return $_[0]->{'_out_fh'} }
+sub get_write_fh { return $_[0]->{'_out_fh'} }
 
 1;

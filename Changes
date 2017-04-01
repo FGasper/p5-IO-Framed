@@ -5,3 +5,8 @@ Revision history for Perl module IO::Framed
 
 0.011 Sat Apr 1 2016
     - Compile/sanity fixes
+
+0.012 Sat Apr 1 2016
+    - instead of “input”/“output” in accessors,
+      use “read”/“write” since those are the module and method names
+      and should thus be easier to remember.

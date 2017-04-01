@@ -23,7 +23,7 @@ sub new {
     return bless $self, $class;
 }
 
-sub get_input_fh { return $_[0]->{'_in_fh'} }
+sub get_read_fh { return $_[0]->{'_in_fh'} }
 
 #----------------------------------------------------------------------
 # IO subclass interface
