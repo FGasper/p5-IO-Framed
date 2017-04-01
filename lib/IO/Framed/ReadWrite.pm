@@ -15,7 +15,7 @@ sub new {
         die "$class is a base class! Maybe you want ::NonBlocking or ::Blocking.";
     }
 
-    my $self = IO::Framed::Read->new( $in_fh, $initial_buffer );
+    my $self = $class->SUPER::new( $in_fh, $initial_buffer );
 
     $self->{'_out_fh'} = $out_fh || $in_fh,
 

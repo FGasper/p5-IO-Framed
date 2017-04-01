@@ -10,3 +10,6 @@ Revision history for Perl module IO::Framed
     - instead of “input”/“output” in accessors,
       use “read”/“write” since those are the module and method names
       and should thus be easier to remember.
+
+0.013 Sat Apr 1 2016
+    - Fix ReadWrite modules to actually work. :-/
