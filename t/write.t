@@ -50,8 +50,11 @@ isa_ok(
     'error from flushing to a full buffer',
 ) or diag explain $@;
 
-$nbw->write('123');
-$nbw->write('123');
+my $wrote_1;
+my $wrote_2;
+
+$nbw->write('123', sub { $wrote_1 = 1 } );
+$nbw->write('123', sub { $wrote_2 = 1 } );
 
 my $buf;
 
@@ -69,10 +72,14 @@ is(
     'get_write_queue_count() - when the queue is actually not empty',
 );
 
-sysread $r, $buf, 3;
+my $flushed;
+while (!$wrote_1) {
+    sysread $r, $buf, 1 ;
+    $flushed = $nbw->flush_write_queue();
+}
 
 is(
-    $nbw->flush_write_queue(),
+    $flushed,
     0,
     'flush_write_queue() - false even when we got a message sent off',
 );
@@ -83,10 +90,13 @@ is(
     'get_write_queue_count() - still not empty',
 );
 
-sysread $r, $buf, 2;
+while (!$wrote_2) {
+    sysread $r, $buf, 1 ;
+    $flushed = $nbw->flush_write_queue();
+}
 
 is(
-    $nbw->flush_write_queue(),
+    $flushed,
     1,
     'flush_write_queue() - true once we empty the write queue',
 );
