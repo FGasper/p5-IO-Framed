@@ -3,7 +3,7 @@ use warnings;
 
 use Test::More;
 
-plan tests => 6;
+plan tests => 7;
 
 use Socket;
 
@@ -27,10 +27,17 @@ is( $f, 'xy', '2-byte frame now OK' );
 
 $r->blocking(0);
 
-eval {
-    $rdr->read(2);
-};
-isa_ok( $@, 'IO::Framed::X::ReadError', 'error from read() on empty' );
-is( $@->errno_is('EAGAIN'), 1, '… is EAGAIN' );
+is( $rdr->read(2), undef, 'undef when OS gives EAGAIN' );
+
+close $w;
+
+eval { $rdr->read(2) };
+isa_ok( $@, 'IO::Framed::X::EmptyRead', 'error from read() on empty' );
+
+close $r;
+
+eval { $rdr->read(2) };
+
+is( $@->errno_is('EBADF'), 1, '… is EAGAIN' ) or diag explain [ $@->get('OS_ERROR'), 0 + $@->get('OS_ERROR') ];
 
 is( $@->errno_is('EPERM'), 0, '… isn’t EPERM' );
