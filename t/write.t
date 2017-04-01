@@ -4,7 +4,7 @@ use autodie;
 
 use Test::More;
 
-plan tests => 9;
+plan tests => 7;
 
 use Socket;
 
@@ -73,23 +73,6 @@ is(
 );
 
 my $flushed;
-while (!$wrote_1) {
-    sysread $r, $buf, 1 ;
-    $flushed = $nbw->flush_write_queue();
-}
-
-is(
-    $flushed,
-    0,
-    'flush_write_queue() - false even when we got a message sent off',
-);
-
-is(
-    $nbw->get_write_queue_count(),
-    1,
-    'get_write_queue_count() - still not empty',
-);
-
 while (!$wrote_2) {
     sysread $r, $buf, 1 ;
     $flushed = $nbw->flush_write_queue();
