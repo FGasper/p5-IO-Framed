@@ -12,7 +12,6 @@ use IO::Framed::Write::Blocking ();
 use IO::Framed::Write::NonBlocking ();
 
 pipe my $r, my $w;
-diag explain "w:" . fileno $w;
 
 my $w_rin = q<>;
 vec( $w_rin, fileno($w), 1 ) = 1;
