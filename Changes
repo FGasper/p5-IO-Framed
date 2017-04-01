@@ -13,3 +13,8 @@ Revision history for Perl module IO::Framed
 
 0.013 Sat Apr 1 2016
     - Fix ReadWrite modules to actually work. :-/
+
+0.014 Sat Apr 1 2016
+    - Add no-op stub queue methods to Write::Blocking so that
+      applications don’t need to care whether a given IO object
+      is blocking or not.

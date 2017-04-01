@@ -9,6 +9,13 @@ use IO::SigGuard ();
 
 use IO::Framed::X ();
 
+#Define these so applications can “run the queue” as though
+#this were a NonBlocking instance.
+use constant {
+    flush_write_queue => 1,
+    get_write_queue_count => 0,
+};
+
 sub write {
     local $!;
 

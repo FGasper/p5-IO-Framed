@@ -4,7 +4,7 @@ use autodie;
 
 use Test::More;
 
-plan tests => 4;
+plan tests => 9;
 
 use Socket;
 
@@ -27,6 +27,19 @@ sub _fill_pipe {
 #_fill_pipe();
 
 my $bw = IO::Framed::Write::Blocking->new( $w );
+
+is(
+    $bw->flush_write_queue(),
+    1,
+    'no-op flush_write_queue() on blocking',
+);
+
+is(
+    $bw->get_write_queue_count(),
+    0,
+    'no-op get_write_queue_size() on blocking',
+);
+
 my $nbw = IO::Framed::Write::NonBlocking->new( $w );
 
 eval { $bw->write('y') while 1 };
@@ -50,6 +63,12 @@ is(
     'flush_write_queue() - false return on incomplete write',
 );
 
+is(
+    $nbw->get_write_queue_count(),
+    2,
+    'get_write_queue_count() - when the queue is actually not empty',
+);
+
 sysread $r, $buf, 3;
 
 is(
@@ -58,10 +77,22 @@ is(
     'flush_write_queue() - false even when we got a message sent off',
 );
 
+is(
+    $nbw->get_write_queue_count(),
+    1,
+    'get_write_queue_count() - still not empty',
+);
+
 sysread $r, $buf, 2;
 
 is(
     $nbw->flush_write_queue(),
     1,
     'flush_write_queue() - true once we empty the write queue',
+);
+
+is(
+    $nbw->get_write_queue_count(),
+    0,
+    'get_write_queue_count() - now empty',
 );
