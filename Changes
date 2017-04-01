@@ -1,20 +1,23 @@
 Revision history for Perl module IO::Framed
 
-0.01 Fri Mar 31 2016
+0.01 Fri Mar 31 2017
     - first release
 
-0.011 Sat Apr 1 2016
+0.011 Sat Apr 1 2017
     - Compile/sanity fixes
 
-0.012 Sat Apr 1 2016
+0.012 Sat Apr 1 2017
     - instead of “input”/“output” in accessors,
       use “read”/“write” since those are the module and method names
       and should thus be easier to remember.
 
-0.013 Sat Apr 1 2016
+0.013 Sat Apr 1 2017
     - Fix ReadWrite modules to actually work. :-/
 
-0.014 Sat Apr 1 2016
+0.014 Sat Apr 1 2017
     - Add no-op stub queue methods to Write::Blocking so that
       applications don’t need to care whether a given IO object
       is blocking or not.
+
+0.015 Sat Apr 1 2017
+    - Fixes for tests on Linux
