@@ -3,17 +3,10 @@ package IO::Framed::ReadWrite;
 use strict;
 use warnings;
 
-
-
-package IO::Framed::Write;
-
-use strict;
-use warnings;
-
 use parent qw(
     IO::Framed::Read
     IO::Framed::Write
-)
+);
 
 sub new {
     my ( $class, $in_fh, $out_fh, $initial_buffer ) = @_;
