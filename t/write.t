@@ -7,6 +7,7 @@ use Test::More;
 plan tests => 7;
 
 use Socket;
+use IO::File ();
 
 use IO::Framed::Write::Blocking ();
 use IO::Framed::Write::NonBlocking ();
@@ -21,6 +22,8 @@ if ($^O eq 'MSWin32'){
 
 my $w_rin = q<>;
 vec( $w_rin, fileno($w), 1 ) = 1;
+
+$w = IO::File->new_from_fd( fileno($w), 'w' );
 
 $w->blocking(0);
 

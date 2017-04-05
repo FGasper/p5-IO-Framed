@@ -6,6 +6,7 @@ use Test::More;
 plan tests => 7;
 
 use Socket;
+use IO::File ();
 
 use IO::Framed::Read ();
 
@@ -31,7 +32,11 @@ syswrite $w, 'y';
 $f = $rdr->read(2);
 is( $f, 'xy', '2-byte frame now OK' );
 
+$r = IO::File->new_from_fd( fileno($r), 'r' );
+
 $r->blocking(0);
+
+$rdr = IO::Framed::Read->new( $r );
 
 is( $rdr->read(2), undef, 'undef when OS gives EAGAIN' );
 

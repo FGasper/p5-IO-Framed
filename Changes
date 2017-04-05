@@ -29,3 +29,7 @@ Revision history for Perl module IO::Framed
 0.017 Wed Apr 5 2017
     - Require the most recent IO::SigGuard in the MakeFile, which
       hopefully will fix some CPAN Testers test reports.
+
+0.018 Wed Apr 5 2017
+    - Tests: avoid blocking() on normally-created file handles since only
+      Perl 5.14+ automatically upgrades file handles to IO::File.
