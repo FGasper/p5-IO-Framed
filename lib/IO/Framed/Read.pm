@@ -57,7 +57,7 @@ sub read {
 
         $bytes -= IO::SigGuard::sysread( $self->{'_in_fh'}, $self->{'_read_buffer'}, $bytes, $buf_len ) || do {
             if ($!) {
-                if ( !$!{'EAGAIN'} ) {
+                if ( !$!{'EAGAIN'} && !$!{'EWOULDBLOCK'}) {
                     die IO::Framed::X->create( 'ReadError', $! );
                 }
             }

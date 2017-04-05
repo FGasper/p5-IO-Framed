@@ -57,7 +57,7 @@ sub _write_now_then_callback {
 
     my $wrote = IO::SigGuard::syswrite( $_[0]->{'_out_fh'}, $_[1] ) || do {
 
-        if ($! && !$!{'EAGAIN'}) {
+        if ($! && !$!{'EAGAIN'} && !$!{'EWOULDBLOCK'}) {
             die IO::Framed::X->create('WriteError', $!);
         }
 

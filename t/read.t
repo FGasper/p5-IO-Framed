@@ -9,7 +9,13 @@ use Socket;
 
 use IO::Framed::Read ();
 
-pipe my $r, my $w;
+my ($r, $w);
+if ($^O eq 'MSWin32'){
+    require Win32::Socketpair;
+    ($r, $w) = Win32::Socketpair::winsocketpair();
+} else {
+    pipe $r, $w;
+}
 
 syswrite $w, 'x' x 3;
 
@@ -32,7 +38,7 @@ is( $rdr->read(2), undef, 'undef when OS gives EAGAIN' );
 close $w;
 
 eval { $rdr->read(2) };
-isa_ok( $@, 'IO::Framed::X::EmptyRead', 'error from read() on empty' );
+isa_ok( $@, 'IO::Framed::X::EmptyRead', 'error from read() on empty' ) or diag ( ref($@) ? "\$\@ type is ".ref($@) : "\$\@ is '$@'" );
 
 close $r;
 
