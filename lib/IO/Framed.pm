@@ -3,7 +3,7 @@ package IO::Framed;
 use strict;
 use warnings;
 
-our $VERSION = 0.016;
+our $VERSION = 0.017;
 
 =encoding utf-8
 

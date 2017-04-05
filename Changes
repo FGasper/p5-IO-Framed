@@ -25,3 +25,7 @@ Revision history for Perl module IO::Framed
 0.016 Wed Apr 5 2017
     - Thanks to CHORNY: Fixes for Strawberry Perl and other OSes that
       treat EWOULDBLOCK as a separate error from EAGAIN.
+
+0.017 Wed Apr 5 2017
+    - Require the most recent IO::SigGuard in the MakeFile, which
+      hopefully will fix some CPAN Testers test reports.

@@ -24,7 +24,7 @@ WriteMakefile1(
         'autodie'                  => 0,
         'parent'                   => 0,
         'X::Tiny'   => 0,
-        'IO::SigGuard' => 0,
+        'IO::SigGuard' => 0.013,
     },
     META_MERGE => {
         'meta-spec' => { version => 2 },
