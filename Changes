@@ -21,3 +21,7 @@ Revision history for Perl module IO::Framed
 
 0.015 Sat Apr 1 2017
     - Fixes for tests on Linux
+
+0.016 Wed Apr 5 2017
+    - Thanks to CHORNY: Fixes for Strawberry Perl and other OSes that
+      treat EWOULDBLOCK as a separate error from EAGAIN.

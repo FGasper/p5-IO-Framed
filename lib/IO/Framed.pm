@@ -3,7 +3,7 @@ package IO::Framed;
 use strict;
 use warnings;
 
-our $VERSION = 0.015;
+our $VERSION = 0.016;
 
 =encoding utf-8
 
@@ -93,7 +93,8 @@ Example:
     #return the full 10 bytes; otherwise, it’ll return undef again.
     $framed->read(10);
 
-EINTR prompts a redo of the read operation. EAGAIN prompts an undef return.
+EINTR prompts a redo of the read operation. EAGAIN and EWOULDBLOCK (the same
+error generally, but not always) prompt an undef return.
 Any other failures prompt an instance of L<IO::Framed::X::ReadError> to be
 thrown.
 
@@ -120,11 +121,21 @@ Empty out the write queue by calling C<flush_write_queue()> and looking for
 a truthy response. (A falsey response means there is still data left in the
 queue.) C<get_write_queue_count()> gives you the number of queue items left
 to write. (A partially-written item is treated the same as a fully-unwritten
-one.)
+one.) Since version 0.014 Blocking.pm includes stubs of these methods as well
+so that applications need not care whether they have blocking or non-blocking
+I/O.
 
-=head1 EXCEPTIONS THROWN
+C<write()> returns undef on EAGAIN and EWOULDBLOCK and retries on EINTR;
+other errors prompt a thrown exception.
+
+=head1 ERROR RESPONSES
+
+An empty read or any I/O error besides the ones mentioned previously
+are indicated via an instance of one of the following exceptions.
 
 All exceptions subclass L<X::Tiny::Base>.
+
+=over
 
 =head2 L<IO::Frame::X::ReadError>
 
@@ -137,6 +148,10 @@ method).
 
 No properties. If this is thrown, your peer has probably closed the connection.
 You probably should thus always trap this exception.
+
+=back
+
+B<NOTE:> This distribution doesn’t write to C<$!>.
 
 #----------------------------------------------------------------------
 
