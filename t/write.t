@@ -11,7 +11,13 @@ use Socket;
 use IO::Framed::Write::Blocking ();
 use IO::Framed::Write::NonBlocking ();
 
-pipe my $r, my $w;
+my ($r, $w);
+if ($^O eq 'MSWin32'){
+    require Win32::Socketpair;
+    ($r, $w) = Win32::Socketpair::winsocketpair();
+} else {
+    pipe $r, $w;
+}
 
 my $w_rin = q<>;
 vec( $w_rin, fileno($w), 1 ) = 1;
