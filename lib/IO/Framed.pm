@@ -137,14 +137,14 @@ All exceptions subclass L<X::Tiny::Base>.
 
 =over
 
-=head2 L<IO::Frame::X::ReadError>
+=item L<IO::Frame::X::ReadError>
 
-=head2 L<IO::Frame::X::WriteError>
+=item L<IO::Frame::X::WriteError>
 
 These both have an C<OS_ERROR> property (cf. L<X::Tiny::Base>’s accessor
 method).
 
-=head2 L<IO::Frame::X::EmptyRead>
+=item L<IO::Frame::X::EmptyRead>
 
 No properties. If this is thrown, your peer has probably closed the connection.
 You probably should thus always trap this exception.
