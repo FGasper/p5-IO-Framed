@@ -11,10 +11,6 @@ use parent qw(
 sub new {
     my ( $class, $in_fh, $out_fh, $initial_buffer ) = @_;
 
-    if ( $class eq __PACKAGE__ ) {
-        die "$class is a base class! Maybe you want ::NonBlocking or ::Blocking.";
-    }
-
     my $self = $class->SUPER::new( $in_fh, $initial_buffer );
 
     $self->{'_out_fh'} = $out_fh || $in_fh,

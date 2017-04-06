@@ -10,10 +10,6 @@ use IO::Framed::X ();
 sub new {
     my ( $class, $out_fh ) = @_;
 
-    if ( !$class->can('write') ) {
-        die "$class has no write() method! Try ::NonBlocking or ::Blocking?";
-    }
-
     my $self = {
         _out_fh => $out_fh,
         _writer => \&_write_now,
