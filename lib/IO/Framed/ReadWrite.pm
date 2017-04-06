@@ -19,7 +19,7 @@ sub new {
 
     $self->{'_out_fh'} = $out_fh || $in_fh,
 
-    return bless $self, $class;
+    return (bless $self, $class)->disable_write_queue();
 }
 
 1;

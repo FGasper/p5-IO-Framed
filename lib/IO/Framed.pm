@@ -3,7 +3,7 @@ package IO::Framed;
 use strict;
 use warnings;
 
-our $VERSION = 0.018;
+our $VERSION = '0.02_TRIAL';
 
 =encoding utf-8
 
@@ -22,18 +22,18 @@ Reading:
     #the given length (5 in this case) of bytes to read.
     $frame = $reader->read(5);
 
-Writing, blocking I/O:
+Writing, unqueued (i.e., for blocking writes):
 
-    my $writer = IO::Framed::Write::Blocking->new( $out_fh );
+    my $writer = IO::Framed::Write->new( $out_fh );
 
     #The second parameter (if given) is executed immediately after the final
     #byte of the payload is written. For blocking I/O this happens
     #before the following method returns.
     $writer->write('hoohoo', sub { print 'sent!' } );
 
-Writing, non-blocking I/O:
+Writing, queued (for non-blocking writes):
 
-    my $nb_writer = IO::Framed::Write::NonBlocking->new( $out_fh );
+    $writer->enable_write_queue();
 
     #This just adds to a memory queue:
     $writer->write('hoohoo', sub { print 'sent!' } );
@@ -46,9 +46,8 @@ Writing, non-blocking I/O:
     #argument to write() only fires when the queue item is sent completely.
     my $empty = $writer->flush_write_queue();
 
-There are also C<IO::Framed::ReadWrite::Blocking> and
-C<IO::Framed::ReadWrite::NonBlocking>, which combine the features of the
-respective read and write modules above.
+You can also use C<IO::Framed::ReadWrite>, which combine the
+features of the read and write modules above.
 
 =head1 DESCRIPTION
 
@@ -100,30 +99,30 @@ thrown.
 
 =head1 ABOUT WRITES
 
-Blocking writes are straightforward: the system will always send the entire
-buffer.
+Writes for blocking I/O are straightforward: the system will always send
+the entire buffer. The OS’s C<write()> won’t return until everything
+meant to be written is written. Life is pleasant; life is simple. :)
 
-Non-blocking writes are trickier. Since we can’t know that the output
-filehandle is ready right when we want it, we have to queue up our writes
+Non-blocking I/O is trickier. Not only can the OS’s C<write()> only write
+a portion of the data it’s given, but we also can’t know that the output
+filehandle is ready right when we want it. This means that we have to queue up
+our writes
 then write them once we know (e.g., through C<select()>) that the filehandle
 is ready. Each C<write()> call, then, enqueues one new buffer to write.
 
 Since it’s often useful to know when a payload has been sent,
-C<write()> accepts a callback that will be executed immediately
+C<write()> accepts an optional callback that will be executed immediately
 after the last byte of the payload is written to the output filehandle.
-
-Note that both blocking and non-blocking I/O expose a C<write()> method,
-though NonBlocking.pm’s module is just a “push” onto a queue. This allows
-anything that writes to the object not to care whether it’s blocking or
-non-blocking I/O.
 
 Empty out the write queue by calling C<flush_write_queue()> and looking for
 a truthy response. (A falsey response means there is still data left in the
 queue.) C<get_write_queue_count()> gives you the number of queue items left
 to write. (A partially-written item is treated the same as a fully-unwritten
-one.) Since version 0.014 Blocking.pm includes stubs of these methods as well
-so that applications need not care whether they have blocking or non-blocking
-I/O.
+one.)
+
+Note that, while it’s acceptable to activate and deactive the write queue,
+the write queue must be empty in order to deactivate it. (You’ll get a
+nasty, untyped exception otherwise!)
 
 C<write()> returns undef on EAGAIN and EWOULDBLOCK and retries on EINTR;
 other errors prompt a thrown exception.
@@ -153,7 +152,24 @@ You probably should thus always trap this exception.
 
 B<NOTE:> This distribution doesn’t write to C<$!>.
 
-#----------------------------------------------------------------------
+=head1 LEGACY CLASSES
+
+This distribution also includes the following B<DEPRECATED> legacy classes:
+
+=over
+
+=item * IO::Frame::Write::Blocking
+
+=item * IO::Frame::Write::NonBlocking
+
+=item * IO::Frame::ReadWrite::Blocking
+
+=item * IO::Frame::ReadWrite::NonBlocking
+
+=back
+
+I’ll keep these in for the time being but eventually B<WILL> remove them.
+Please adjust any calling code that you might have.
 
 =head1 REPOSITORY
 

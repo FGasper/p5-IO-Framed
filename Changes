@@ -33,3 +33,8 @@ Revision history for Perl module IO::Framed
 0.018 Wed Apr 5 2017
     - Tests: avoid blocking() on normally-created file handles since only
       Perl 5.14+ automatically upgrades file handles to IO::File.
+
+0.02 Wed Apr 5 2017
+    - Deprecate the Blocking/NonBlocking write classes. This radically
+      simplifies the usage and allows clean switching back and forth between
+      blocking (“unqueued”) and non-blocking (“queued”) writes.
