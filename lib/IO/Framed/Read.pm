@@ -7,6 +7,10 @@ use IO::SigGuard ();
 
 use IO::Framed::X ();
 
+use constant FIONREAD => ($^O eq 'linux') ? 21531 : ($^O eq 'darwin') ? 1074030207 : undef;
+
+#use constant BUFSIZ => 65536;
+
 sub new {
     my ( $class, $in_fh, $initial_buffer ) = @_;
 
@@ -19,6 +23,13 @@ sub new {
         _read_buffer   => $initial_buffer,
         _bytes_to_read => 0,
     };
+
+    if ( FIONREAD && -S $in_fh ) {
+        require Socket;
+        local $!;
+        $self->{'_recv_buf'} = unpack 'I', getsockopt( $in_fh, Socket::SOL_SOCKET(), Socket::SO_RCVBUF() );
+        die "getsockopt(SOL_SOCKET, SO_RCVBUF): $!" if $!;
+    }
 
     return bless $self, $class;
 }
@@ -54,6 +65,11 @@ sub read {
         $bytes -= $buf_len;
 
         local $!;
+
+        if ($self->{'_recv_buf'}) {
+            ioctl( $self->{'_in_fh'}, FIONREAD, my $pending = q<> ) or die "ioctl: $!";
+            return undef if unpack('I', $pending) < $bytes;
+        }
 
         $bytes -= IO::SigGuard::sysread( $self->{'_in_fh'}, $self->{'_read_buffer'}, $bytes, $buf_len ) || do {
             if ($!) {
