@@ -3,7 +3,7 @@ package IO::Framed;
 use strict;
 use warnings;
 
-our $VERSION = '0.02_TRIAL';
+our $VERSION = '0.02';
 
 =encoding utf-8
 
@@ -124,8 +124,14 @@ Note that, while it’s acceptable to activate and deactive the write queue,
 the write queue must be empty in order to deactivate it. (You’ll get a
 nasty, untyped exception otherwise!)
 
-C<write()> returns undef on EAGAIN and EWOULDBLOCK and retries on EINTR;
-other errors prompt a thrown exception.
+C<write()> returns undef on EAGAIN and EWOULDBLOCK. It retries on EINTR,
+so you should never actually see this error from this module.
+Other errors prompt a thrown exception.
+
+NB: C<enable_write_queue()> and C<disable_write_queue()> return the object,
+so you can instantiate thus:
+
+    my $nb_writer = IO::Framed::Write->new($fh)->enable_write_queue();
 
 =head1 ERROR RESPONSES
 
