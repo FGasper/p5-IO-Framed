@@ -23,7 +23,9 @@ if ($^O eq 'MSWin32'){
 my $w_rin = q<>;
 vec( $w_rin, fileno($w), 1 ) = 1;
 
-$w = IO::File->new_from_fd( fileno($w), 'w' );
+if ($^O ne 'MSWin32') {
+    $w = IO::File->new_from_fd( fileno($w), 'w' );
+}
 
 $w->blocking(0);
 

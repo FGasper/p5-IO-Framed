@@ -32,7 +32,9 @@ syswrite $w, 'y';
 $f = $rdr->read(2);
 is( $f, 'xy', '2-byte frame now OK' );
 
-$r = IO::File->new_from_fd( fileno($r), 'r' );
+if ($^O ne 'MSWin32') {
+    $r = IO::File->new_from_fd( fileno($r), 'r' );
+}
 
 $r->blocking(0);
 
