@@ -6,7 +6,7 @@ use Test::More;
 plan tests => 7;
 
 use Socket;
-use IO::File ();
+use IO::File ();    #so blocking() will work
 
 use IO::Framed::Read ();
 
@@ -31,8 +31,6 @@ is( $f, undef, 'undef when full frame not available' );
 syswrite $w, 'y';
 $f = $rdr->read(2);
 is( $f, 'xy', '2-byte frame now OK' );
-
-$r = IO::File->new_from_fd( fileno($r), 'r' );
 
 $r->blocking(0);
 

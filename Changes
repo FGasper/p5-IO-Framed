@@ -38,3 +38,6 @@ Revision history for Perl module IO::Framed
     - Deprecate the Blocking/NonBlocking write classes. This radically
       simplifies the usage and allows clean switching back and forth between
       blocking (“unqueued”) and non-blocking (“queued”) writes.
+
+0.021 Sun Apr 9 2017
+    - Again tweak the tests for MSWin: drop new_from_fd() since it hangs.
