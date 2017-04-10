@@ -41,3 +41,4 @@ Revision history for Perl module IO::Framed
 
 0.021 Sun Apr 9 2017
     - Again tweak the tests for MSWin: drop new_from_fd() since it hangs.
+      (thank you to CHORNY for pointing out the problem!)
