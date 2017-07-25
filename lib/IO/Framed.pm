@@ -3,7 +3,7 @@ package IO::Framed;
 use strict;
 use warnings;
 
-our $VERSION = '0.021';
+our $VERSION = '0.03_TRIAL1';
 
 =encoding utf-8
 
@@ -16,38 +16,37 @@ IO::Framed - Convenience wrapper for frame-based I/O
 Reading:
 
     #See below about seed bytes.
-    my $reader = IO::Framed::Read->new( $in_fh, 'seed bytes' );
+    my $iof = IO::Framed->new( $fh, 'seed bytes' );
 
     #This returns undef if the $in_fh doesn’t have at least
     #the given length (5 in this case) of bytes to read.
-    $frame = $reader->read(5);
+    $frame = $iof->read(5);
 
 Writing, unqueued (i.e., for blocking writes):
-
-    my $writer = IO::Framed::Write->new( $out_fh );
 
     #The second parameter (if given) is executed immediately after the final
     #byte of the payload is written. For blocking I/O this happens
     #before the following method returns.
-    $writer->write('hoohoo', sub { print 'sent!' } );
+    $iof->write('hoohoo', sub { print 'sent!' } );
 
 Writing, queued (for non-blocking writes):
 
-    $writer->enable_write_queue();
+    $iof->enable_write_queue();
 
     #This just adds to a memory queue:
-    $writer->write('hoohoo', sub { print 'sent!' } );
+    $iof->write('hoohoo', sub { print 'sent!' } );
 
     #This will be 1, since we have 1 message/frame queued to send.
-    $writer->get_write_queue_count();
+    $iof->get_write_queue_count();
 
     #Returns 1 if it empties out the queue; 0 otherwise.
     #Partial frame writes are accommodated; the callback given as 2nd
     #argument to write() only fires when the queue item is sent completely.
-    my $empty = $writer->flush_write_queue();
+    my $empty = $iof->flush_write_queue();
 
-You can also use C<IO::Framed::ReadWrite>, which combine the
-features of the read and write modules above.
+You can also use C<IO::Framed::Read> and C<IO::Framed::Write>, which
+contain just the read and write features. (C<IO::Framed> is actually a
+subclass of them both.)
 
 =head1 DESCRIPTION
 
@@ -80,22 +79,59 @@ for a continuance is not the same number as were originally requested.
 Example:
 
     #This reads only 2 bytes, so read() will return undef.
-    $framed->read(10);
+    $iof->read(10);
 
     #… wait for readiness if non-blocking …
 
     #XXX This die()s because we’re in the middle of trying to read
     #10 bytes, not 4.
-    $framed->read(4);
+    $iof->read(4);
 
     #If this completes the read (i.e., takes in 8 bytes), then it’ll
     #return the full 10 bytes; otherwise, it’ll return undef again.
-    $framed->read(10);
+    $iof->read(10);
 
 EINTR prompts a redo of the read operation. EAGAIN and EWOULDBLOCK (the same
 error generally, but not always) prompt an undef return.
 Any other failures prompt an instance of L<IO::Framed::X::ReadError> to be
 thrown.
+
+=head2 EMPTY READS
+
+This class’s C<read()> method will, by default, throw an instance of
+L<IO::Framed::X::EmptyRead> on an empty read. This is normal and logical
+behavior in contexts (like L<Net::WebSocket>) where the data stream itself
+indicates when no more data will come across. In such cases an empty read
+is genuinely an error condition: it either means you’re reading past when
+you should, or the other side prematurely went away.
+
+In some other cases, though, that empty read is the normal and expected way
+to know that a filehandle/socket has no more data to read.
+
+If you prefer, then, you can call the C<allow_empty_read()> method to switch
+to a different behavior, e.g.:
+
+    $framed->allow_empty_read();
+
+    my $frame = $framed->read(10);
+
+    if (length $frame) {
+        #yay, we got a frame!
+    }
+    elsif (defined $frame) {
+        #no more data will come in, so let’s close up shop
+    }
+    else {
+        #undef means we just haven’t gotten as much data as we want yet.
+    }
+
+Instead of throwing the aforementioned exception, C<read()> now returns
+empty-string on an empty read. That means that you now have to distinguish
+between multiple “falsey” states: undef for when the requested number
+of bytes hasn’t yet arrived, and empty string for when no more bytes
+will ever arrive. But it is also true now that the only exceptions thrown
+are bona fide B<errors>, which will suit some applications better than the
+default behavior.
 
 =head1 ABOUT WRITES
 
@@ -103,8 +139,8 @@ Writes for blocking I/O are straightforward: the system will always send
 the entire buffer. The OS’s C<write()> won’t return until everything
 meant to be written is written. Life is pleasant; life is simple. :)
 
-Non-blocking I/O is trickier. Not only can the OS’s C<write()> only write
-a portion of the data it’s given, but we also can’t know that the output
+Non-blocking I/O is trickier. Not only can the OS’s C<write()> write
+a subset of the data it’s given, but we also can’t know that the output
 filehandle is ready right when we want it. This means that we have to queue up
 our writes
 then write them once we know (e.g., through C<select()>) that the filehandle
@@ -152,11 +188,38 @@ method).
 =item L<IO::Frame::X::EmptyRead>
 
 No properties. If this is thrown, your peer has probably closed the connection.
-You probably should thus always trap this exception.
+Unless you have called C<allow_empty_read()> to set an alternate behavior,
+you should always trap this exception if you call C<read()>.
 
 =back
 
-B<NOTE:> This distribution doesn’t write to C<$!>.
+B<NOTE:> This distribution doesn’t write to C<$!>. EAGAIN and EWOULDBLOCK on
+C<flush_write_queue()> are ignored; all other errors are converted
+to thrown exceptions.
+
+=cut
+
+package IO::Framed;
+
+use strict;
+use warnings;
+
+use parent qw(
+    IO::Framed::Read
+    IO::Framed::Write
+);
+
+sub new {
+    my ( $class, $in_fh, $out_fh, $initial_buffer ) = @_;
+
+    my $self = $class->SUPER::new( $in_fh, $initial_buffer );
+
+    $self->{'_out_fh'} = $out_fh || $in_fh,
+
+    return (bless $self, $class)->disable_write_queue();
+}
+
+1;
 
 =head1 LEGACY CLASSES
 
@@ -167,6 +230,8 @@ This distribution also includes the following B<DEPRECATED> legacy classes:
 =item * IO::Frame::Write::Blocking
 
 =item * IO::Frame::Write::NonBlocking
+
+=item * IO::Frame::ReadWrite
 
 =item * IO::Frame::ReadWrite::Blocking
 
