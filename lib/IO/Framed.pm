@@ -3,7 +3,7 @@ package IO::Framed;
 use strict;
 use warnings;
 
-our $VERSION = '0.03_TRIAL1';
+our $VERSION = '0.03-TRIAL2';
 
 =encoding utf-8
 
@@ -122,7 +122,8 @@ to a different behavior, e.g.:
         #no more data will come in, so let’s close up shop
     }
     else {
-        #undef means we just haven’t gotten as much data as we want yet.
+        #undef means we just haven’t gotten as much data as we want yet;
+        #in this case, that means fewer than 10 bytes are available.
     }
 
 Instead of throwing the aforementioned exception, C<read()> now returns
@@ -199,11 +200,6 @@ to thrown exceptions.
 
 =cut
 
-package IO::Framed;
-
-use strict;
-use warnings;
-
 use parent qw(
     IO::Framed::Read
     IO::Framed::Write
@@ -259,5 +255,3 @@ Copyright 2017 by L<Gasper Software Consulting, LLC|http://gaspersoftware.com>
 This distribution is released under the same license as Perl.
 
 =cut
-
-1;
