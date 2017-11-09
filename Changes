@@ -47,3 +47,6 @@ Revision history for Perl module IO::Framed
     - Deprecate the ReadWrite class; reassign that functionality to
       the IO::Framed namespace.
     - allow_empty_read() to make read() not throw EmptyRead on an empty read.
+
+0.031 Thu Nov 9 2017
+    - Fix up some documentation. No code changes.

@@ -3,7 +3,7 @@ package IO::Framed;
 use strict;
 use warnings;
 
-our $VERSION = '0.03';
+our $VERSION = '0.031';
 
 =encoding utf-8
 
@@ -134,6 +134,9 @@ will ever arrive. But it is also true now that the only exceptions thrown
 are bona fide B<errors>, which will suit some applications better than the
 default behavior.
 
+NB: If you want to be super-light, you can bring in IO::Framed::Read instead
+of the full IO::Framed. (IO::Framed is already pretty lightweight, though.)
+
 =head1 ABOUT WRITES
 
 Writes for blocking I/O are straightforward: the system will always send
@@ -170,6 +173,9 @@ so you can instantiate thus:
 
     my $nb_writer = IO::Framed::Write->new($fh)->enable_write_queue();
 
+NB: If you want to be super-light, you can bring in IO::Framed::Write instead
+of the full IO::Framed. (IO::Framed is already pretty lightweight, though.)
+
 =head1 ERROR RESPONSES
 
 An empty read or any I/O error besides the ones mentioned previously
@@ -179,18 +185,18 @@ All exceptions subclass L<X::Tiny::Base>.
 
 =over
 
-=item L<IO::Frame::X::ReadError>
+=item L<IO::Framed::X::ReadError>
 
-=item L<IO::Frame::X::WriteError>
+=item L<IO::Framed::X::WriteError>
 
 These both have an C<OS_ERROR> property (cf. L<X::Tiny::Base>’s accessor
 method).
 
-=item L<IO::Frame::X::EmptyRead>
+=item L<IO::Framed::X::EmptyRead>
 
 No properties. If this is thrown, your peer has probably closed the connection.
 Unless you have called C<allow_empty_read()> to set an alternate behavior,
-you should always trap this exception if you call C<read()>.
+you might want to trap this exception if you call C<read()>.
 
 =back
 
@@ -223,15 +229,15 @@ This distribution also includes the following B<DEPRECATED> legacy classes:
 
 =over
 
-=item * IO::Frame::Write::Blocking
+=item * IO::Framed::Write::Blocking
 
-=item * IO::Frame::Write::NonBlocking
+=item * IO::Framed::Write::NonBlocking
 
-=item * IO::Frame::ReadWrite
+=item * IO::Framed::ReadWrite
 
-=item * IO::Frame::ReadWrite::Blocking
+=item * IO::Framed::ReadWrite::Blocking
 
-=item * IO::Frame::ReadWrite::NonBlocking
+=item * IO::Framed::ReadWrite::NonBlocking
 
 =back
 
