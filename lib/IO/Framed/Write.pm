@@ -3,8 +3,6 @@ package IO::Framed::Write;
 use strict;
 use warnings;
 
-use IO::SigGuard ();
-
 use IO::Framed::X ();
 
 sub new {
@@ -46,7 +44,7 @@ sub write {
 sub _write_now {
     local $!;
 
-    IO::SigGuard::syswrite( $_[0]->{'_out_fh'}, $_[1] ) or do {
+    $_[0]->can('WRITE')->( $_[0]->{'_out_fh'}, $_[1] ) or do {
         die IO::Framed::X->create('WriteError', $!);
     };
 
@@ -97,12 +95,18 @@ sub forget_write_queue {
     return $count;
 }
 
+sub WRITE {
+    require IO::SigGuard;
+    *WRITE = *IO::SigGuard::syswrite;
+    goto &WRITE;
+}
+
 #----------------------------------------------------------------------
 
 sub _write_now_then_callback {
     local $!;
 
-    my $wrote = IO::SigGuard::syswrite( $_[0]->{'_out_fh'}, $_[1] ) || do {
+    my $wrote = $_[0]->can('WRITE')->( $_[0]->{'_out_fh'}, $_[1] ) || do {
         if ($! && !$!{'EAGAIN'} && !$!{'EWOULDBLOCK'}) {
             die IO::Framed::X->create('WriteError', $!);
         }

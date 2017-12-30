@@ -3,6 +3,7 @@ Changes
 LICENSE
 MANIFEST
 Makefile.PL
+README.pod
 lib/IO/Framed.pm
 lib/IO/Framed/Read.pm
 lib/IO/Framed/ReadWrite.pm
@@ -17,5 +18,8 @@ lib/IO/Framed/X/EmptyRead.pm
 lib/IO/Framed/X/ErrnoBase.pm
 lib/IO/Framed/X/ReadError.pm
 lib/IO/Framed/X/WriteError.pm
+t/custom.t
+t/legacy_readwrite.t
 t/read.t
+t/sanity.t
 t/write.t

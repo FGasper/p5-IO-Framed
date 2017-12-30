@@ -3,7 +3,7 @@ package IO::Framed;
 use strict;
 use warnings;
 
-our $VERSION = '0.031';
+our $VERSION = '0.04-TRIAL1';
 
 =encoding utf-8
 
@@ -176,12 +176,38 @@ so you can instantiate thus:
 NB: If you want to be super-light, you can bring in IO::Framed::Write instead
 of the full IO::Framed. (IO::Framed is already pretty lightweight, though.)
 
+=head1 CUSTOM READ & WRITE LOGIC
+
+As of version 0.04, you can override READ and WRITE methods with your
+preferred logic. For example, in Linux you might prefer C<send()> rather than
+C<syswrite()> to avoid SIGPIPE, thus:
+
+    package My::Framed;
+
+    use parent qw( IO::Framed::Write );
+
+    #Only these two arguments are given.
+    sub WRITE {
+        return send( $_[0], $_[1], Socket::MSG_NOSIGNAL );
+    }
+
+(NB: In *BSD OSes you can set SO_SIGNOPIPE on the filehandle instead.)
+
+You can likewise set C<READ()> to achieve the same effect for reads.
+(C<READ()> receives all four arguments that C<sysread()> can consume.)
+
+B<IMPORTANT:> Unlike most inherited methods, C<READ()> and C<WRITE()> do
+NOT receive the object instance. They must follow the same semantics as
+Perl’s C<sysread()> and C<syswrite()>: i.e., they must return the number
+of bytes read/written, or return undef and set C<$!> appropriately on error.
+
 =head1 ERROR RESPONSES
 
 An empty read or any I/O error besides the ones mentioned previously
 are indicated via an instance of one of the following exceptions.
 
-All exceptions subclass L<X::Tiny::Base>.
+All exceptions subclass L<IO::Framed::X::Base>, which itself
+subclasses C<X::Tiny::Base>.
 
 =over
 

@@ -25,15 +25,16 @@ operating system. This isn’t an *error* so much as just an “exceptional
 condition” that so radically changes the application state that it’s
 worth throwing on.
 
-You should probably always trap this error so you can cleanly shut things
-down.
+You can suppress this error by setting C<allow_empty_read()> on the
+L<IO::Framed::Read> instance; otherwise, you should probably always trap
+this error so you can cleanly shut things down.
 
 =cut
 
 use strict;
 use warnings;
 
-use parent qw( X::Tiny::Base );
+use parent qw( IO::Framed::X::Base );
 
 sub _new {
     my ($class) = @_;

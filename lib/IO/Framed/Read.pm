@@ -3,8 +3,6 @@ package IO::Framed::Read;
 use strict;
 use warnings;
 
-use IO::SigGuard ();
-
 use IO::Framed::X ();
 
 sub new {
@@ -36,6 +34,12 @@ sub allow_empty_read {
 
 my $buf_len;
 
+sub READ {
+    require IO::SigGuard;
+    *READ = *IO::SigGuard::sysread;
+    goto &READ;
+}
+
 #We assume here that whatever read may be incomplete at first
 #will eventually be repeated so that we can complete it. e.g.:
 #
@@ -61,7 +65,7 @@ sub read {
 
         local $!;
 
-        $bytes -= IO::SigGuard::sysread( $self->{'_in_fh'}, $self->{'_read_buffer'}, $bytes, $buf_len ) || do {
+        $bytes -= $self->can('READ')->( $self->{'_in_fh'}, $self->{'_read_buffer'}, $bytes, $buf_len ) || do {
             if ($!) {
                 if ( !$!{'EAGAIN'} && !$!{'EWOULDBLOCK'}) {
                     die IO::Framed::X->create( 'ReadError', $! );

@@ -3,7 +3,7 @@ package IO::Framed::X::ErrnoBase;
 use strict;
 use warnings;
 
-use parent qw( X::Tiny::Base );
+use parent qw( IO::Framed::X::Base );
 
 sub errno_is {
     my ($self, $name) = @_;
