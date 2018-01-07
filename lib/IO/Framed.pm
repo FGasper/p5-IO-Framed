@@ -3,7 +3,7 @@ package IO::Framed;
 use strict;
 use warnings;
 
-our $VERSION = '0.041-TRIAL1';
+our $VERSION = '0.04';
 
 =encoding utf-8
 
@@ -238,23 +238,37 @@ use parent qw(
 );
 
 sub new {
-    my ( $class, $fh, $initial_buffer ) = @_;
+    my ( $class, $in_fh, $out_fh, $initial_buffer ) = @_;
 
-    my $self = $class->SUPER::new( $fh, $initial_buffer );
+    my $self = $class->SUPER::new( $in_fh, $initial_buffer );
+
+    $self->{'_out_fh'} = $out_fh || $in_fh,
 
     return (bless $self, $class)->disable_write_queue();
 }
 
 1;
 
-=head1 KNOWN ISSUES
+=head1 LEGACY CLASSES
+
+This distribution also includes the following B<DEPRECATED> legacy classes:
 
 =over
 
-=item * Initial buffers aren’t handled correctly on Read objects if the first
-C<read()> call does not want more bytes than are in the initial buffer.
+=item * IO::Framed::Write::Blocking
+
+=item * IO::Framed::Write::NonBlocking
+
+=item * IO::Framed::ReadWrite
+
+=item * IO::Framed::ReadWrite::Blocking
+
+=item * IO::Framed::ReadWrite::NonBlocking
 
 =back
+
+I’ll keep these in for the time being but eventually B<WILL> remove them.
+Please adjust any calling code that you might have.
 
 =head1 REPOSITORY
 

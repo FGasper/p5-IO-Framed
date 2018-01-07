@@ -4,12 +4,13 @@ use autodie;
 
 use Test::More;
 
-plan tests => 8;
+plan tests => 7;
 
 use Socket;
 use IO::File ();    #so blocking() will work
 
-use IO::Framed::Write ();
+use IO::Framed::Write::Blocking ();
+use IO::Framed::Write::NonBlocking ();
 
 my ($r, $w);
 if ($^O eq 'MSWin32'){
@@ -32,9 +33,7 @@ sub _fill_pipe {
 #----------------------------------------------------------------------
 #_fill_pipe();
 
-my $bw = IO::Framed::Write->new( $w );
-
-is( $bw->get_filehandle(), $w, 'get_filehandle()' );
+my $bw = IO::Framed::Write::Blocking->new( $w );
 
 is(
     $bw->flush_write_queue(),
@@ -48,7 +47,7 @@ is(
     'no-op get_write_queue_size() on blocking',
 );
 
-my $nbw = IO::Framed::Write->new( $w )->enable_write_queue();
+my $nbw = IO::Framed::Write::NonBlocking->new( $w );
 
 eval { $bw->write('y') while 1 };
 

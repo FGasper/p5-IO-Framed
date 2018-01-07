@@ -3,8 +3,6 @@ package IO::Framed::Read;
 use strict;
 use warnings;
 
-use parent qw( IO::Framed::Base );
-
 use IO::Framed::X ();
 
 sub new {
@@ -15,13 +13,15 @@ sub new {
     }
 
     my $self = {
-        _fh            => $in_fh,
+        _in_fh         => $in_fh,
         _read_buffer   => $initial_buffer,
         _bytes_to_read => 0,
     };
 
     return bless $self, $class;
 }
+
+sub get_read_fh { return $_[0]->{'_in_fh'} }
 
 #----------------------------------------------------------------------
 # IO subclass interface
@@ -65,7 +65,7 @@ sub read {
 
         local $!;
 
-        $bytes -= $self->can('READ')->( $self->{'_fh'}, $self->{'_read_buffer'}, $bytes, $buf_len ) || do {
+        $bytes -= $self->can('READ')->( $self->{'_in_fh'}, $self->{'_read_buffer'}, $bytes, $buf_len ) || do {
             if ($!) {
                 if ( !$!{'EAGAIN'} && !$!{'EWOULDBLOCK'}) {
                     die IO::Framed::X->create( 'ReadError', $! );

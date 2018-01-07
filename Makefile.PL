@@ -39,7 +39,6 @@ WriteMakefile1(
     TEST_REQUIRES => {
         'Test::More'      => 0,
         'Test::Simple'    => 0,
-        'File::Temp'      => 0,
         ( $^O eq 'MSWin32' ? ('Win32::Socketpair' => 0.02) : () ),
     },
 );

@@ -3,7 +3,7 @@ use warnings;
 
 use Test::More;
 
-plan tests => 10;
+plan tests => 9;
 
 use Socket;
 use IO::File ();    #so blocking() will work
@@ -25,8 +25,6 @@ if ($^O eq 'MSWin32'){
 syswrite $w, 'x' x 3;
 
 my $rdr = IO::Framed::Read->new( $r );
-
-is( $rdr->get_filehandle(), $r, 'get_filehandle()' );
 
 my $f = $rdr->read(2);
 is( $f, 'xx', '2-byte frame OK' );

@@ -1,9 +1,5 @@
 Revision history for Perl module IO::Framed
 
-0.041 Sun Jan 7 2018
-    - BREAKING: Removed old ReadWrite and Blocking/Nonblocking classes.
-    - Added get_filehandle() base method.
-
 0.04 Fri Dec 29 2017
     - Allow read methods besides IO::SigGuard::sysread.
     - Allow write methods besides IO::SigGuard::syswrite.

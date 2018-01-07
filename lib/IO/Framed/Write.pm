@@ -3,20 +3,20 @@ package IO::Framed::Write;
 use strict;
 use warnings;
 
-use parent qw( IO::Framed::Base );
-
 use IO::Framed::X ();
 
 sub new {
     my ( $class, $out_fh ) = @_;
 
     my $self = {
-        _fh => $out_fh,
+        _out_fh => $out_fh,
         _writer => \&_write_now,
     };
 
     return bless $self, $class;
 }
+
+sub get_write_fh { return $_[0]->{'_out_fh'} }
 
 sub disable_write_queue {
     if ( $_[0]->{'_write_queue'} && @{ $_[0]->{'_write_queue'} } ) {
@@ -44,7 +44,7 @@ sub write {
 sub _write_now {
     local $!;
 
-    $_[0]->can('WRITE')->( $_[0]->{'_fh'}, $_[1] ) or do {
+    $_[0]->can('WRITE')->( $_[0]->{'_out_fh'}, $_[1] ) or do {
         die IO::Framed::X->create('WriteError', $!);
     };
 
@@ -106,7 +106,7 @@ sub WRITE {
 sub _write_now_then_callback {
     local $!;
 
-    my $wrote = $_[0]->can('WRITE')->( $_[0]->{'_fh'}, $_[1] ) || do {
+    my $wrote = $_[0]->can('WRITE')->( $_[0]->{'_out_fh'}, $_[1] ) || do {
         if ($! && !$!{'EAGAIN'} && !$!{'EWOULDBLOCK'}) {
             die IO::Framed::X->create('WriteError', $!);
         }
