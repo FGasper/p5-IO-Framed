@@ -1,5 +1,9 @@
 Revision history for Perl module IO::Framed
 
+0.10 Tue Jan 9 2018
+    - Switch to two-digit version numbers (rpm seems to like them better)
+    - remove README.pod from Makefile target (cf. EU::MM #119)
+
 0.04 Fri Dec 29 2017
     - Allow read methods besides IO::SigGuard::sysread.
     - Allow write methods besides IO::SigGuard::syswrite.
