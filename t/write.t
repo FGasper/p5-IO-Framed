@@ -20,9 +20,6 @@ if ($^O eq 'MSWin32'){
     pipe $r, $w;
 }
 
-my $w_rin = q<>;
-vec( $w_rin, fileno($w), 1 ) = 1;
-
 $w->blocking(0);
 
 sub _fill_pipe {
