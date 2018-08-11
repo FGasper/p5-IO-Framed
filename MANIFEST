@@ -1,4 +1,5 @@
 .gitignore
+.travis.yml
 Changes
 LICENSE
 MANIFEST
@@ -23,3 +24,4 @@ t/legacy_readwrite.t
 t/read.t
 t/sanity.t
 t/write.t
+t/write_empty.t

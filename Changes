@@ -1,5 +1,10 @@
 Revision history for Perl module IO::Framed
 
+0.11 Sat Aug 11 2018
+    - Treat zero-length and undefined input to write() as a failure state.
+      (I don’t consider this a breaking change because write() should never
+      be called with such inputs.)
+
 0.10 Tue Jan 9 2018
     - Switch to two-digit version numbers (rpm seems to like them better)
     - remove README.pod from Makefile target (cf. EU::MM #119)
