@@ -21,18 +21,21 @@ my @t = (
 for my $test ( @t ) {
     my ($label, $io) = @$test;
 
-    dies_ok(
+    throws_ok(
         sub { $io->write(q<>) },
+        'IO::Framed::X::EmptyWrite',
         "$label: die() on empty-string write()",
     );
 
-    dies_ok(
+    throws_ok(
         sub { $io->write(undef) },
+        'IO::Framed::X::EmptyWrite',
         "$label: die() on undefined write()",
     );
 
-    dies_ok(
+    throws_ok(
         sub { $io->write() },
+        'IO::Framed::X::EmptyWrite',
         "$label: die() on empty write()",
     );
 
@@ -41,15 +44,17 @@ for my $test ( @t ) {
     my $cb_called = 0;
     my $cb = sub { $cb_called++ };
 
-    dies_ok(
+    throws_ok(
         sub { $io->write(q<>, $cb) },
+        'IO::Framed::X::EmptyWrite',
         "$label: die() on empty-string write() with callback",
     );
 
     ok( !$cb_called, '… and the callback wasn’t called' );
 
-    dies_ok(
+    throws_ok(
         sub { $io->write(undef, $cb) },
+        'IO::Framed::X::EmptyWrite',
         "$label: die() on undefined write() with callback",
     );
 

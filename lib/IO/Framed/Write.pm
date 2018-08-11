@@ -34,8 +34,8 @@ sub enable_write_queue {
 }
 
 sub write {
-    die "Undefined input to write()!" if !defined $_[1];
-    die "Zero-length input to write()!" if !defined $_[1];
+    die IO::Framed::X->create('EmptyWrite', "Undefined input to write()!") if !defined $_[1];
+    die IO::Framed::X->create('EmptyWrite', "Empty input to write()!" ) if !length $_[1];
 
     $_[0]->{'_writer'}->(@_);
 }

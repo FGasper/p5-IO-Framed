@@ -16,6 +16,7 @@ lib/IO/Framed/Write/NonBlocking.pm
 lib/IO/Framed/X.pm
 lib/IO/Framed/X/Base.pm
 lib/IO/Framed/X/EmptyRead.pm
+lib/IO/Framed/X/EmptyWrite.pm
 lib/IO/Framed/X/ErrnoBase.pm
 lib/IO/Framed/X/ReadError.pm
 lib/IO/Framed/X/WriteError.pm
