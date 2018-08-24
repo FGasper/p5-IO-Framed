@@ -1,5 +1,8 @@
 Revision history for Perl module IO::Framed
 
+0.12
+    - Add read_until() method.
+
 0.11 Sun Aug 12 2018
     - BREAKING CHANGE: Treat zero-length and undefined input to write() as
       failure states.

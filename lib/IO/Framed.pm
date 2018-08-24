@@ -3,7 +3,7 @@ package IO::Framed;
 use strict;
 use warnings;
 
-our $VERSION = '0.11';
+our $VERSION = '0.12-TRIAL1';
 
 =encoding utf-8
 
@@ -21,6 +21,9 @@ Reading:
     #This returns undef if the $in_fh doesn’t have at least
     #the given length (5 in this case) of bytes to read.
     $frame = $iof->read(5);
+
+    #Don’t call this after an incomplete read().
+    $line_or_undef = $iof->read_until("\x0a");
 
 Writing, unqueued (i.e., for blocking writes):
 
@@ -75,6 +78,8 @@ and that a partial read should be continued once it is sensible to do so.
 
 As a result, C<read()> will throw an exception if the number of bytes given
 for a continuance is not the same number as were originally requested.
+C<read_until()> will throw a similar exception if called between an incomplete
+C<read()> and its completion.
 
 Example:
 
@@ -96,9 +101,18 @@ error generally, but not always) prompt an undef return.
 Any other failures prompt an instance of L<IO::Framed::X::ReadError> to be
 thrown.
 
-=head2 EMPTY READS
+=head2 End-Match Reads
 
-This class’s C<read()> method will, by default, throw an instance of
+Reader modules now implement a C<read_until()> method, which reads arbitrarily
+many bytes until
+a given sequence of bytes appears then returns those bytes (plus the looked-for
+sequence in the return). An obvious application for this feature
+is line-by-line reads, e.g., to implement HTTP or other line-based protocols.
+
+=head2 Empty Reads
+
+This class’s C<read()> and C<read_until()> methods will, by default, throw
+an instance of
 L<IO::Framed::X::EmptyRead> on an empty read. This is normal and logical
 behavior in contexts (like L<Net::WebSocket>) where the data stream itself
 indicates when no more data will come across. In such cases an empty read
@@ -124,6 +138,21 @@ to a different behavior, e.g.:
     else {
         #undef means we just haven’t gotten as much data as we want yet;
         #in this case, that means fewer than 10 bytes are available.
+    }
+
+    #----------------------------------------------------------------------
+    # The same example as above with line-oriented input …
+
+    my $line = $framed->read_until("\x0a");
+
+    if (length $line) {
+        #yay, we got a line!
+    }
+    elsif (defined $line) {
+        #no more data will come in, so let’s close up shop
+    }
+    else {
+        #undef means we just haven’t gotten a full line yet.
     }
 
 Instead of throwing the aforementioned exception, C<read()> now returns

@@ -23,6 +23,7 @@ lib/IO/Framed/X/WriteError.pm
 t/custom.t
 t/legacy_readwrite.t
 t/read.t
+t/read_until.t
 t/sanity.t
 t/write.t
 t/write_empty.t
