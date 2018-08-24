@@ -12,16 +12,6 @@ my $old_libscan = \&ExtUtils::MM_Any::libscan;
 # See lib/ExtUtils/MakeMaker.pm for details of how to influence
 # the contents of the Makefile that is written.
 WriteMakefile1(
-    META_MERGE => {
-        resources => {
-            repository => {
-                type => 'git',
-                url => 'git://github.com/FGasper/p5-IO-Framed.git',
-                web => 'https://github.com/FGasper/p5-IO-Framed',
-            },
-        },
-    },
-
     NAME         => 'IO::Framed',
     VERSION_FROM => 'lib/IO/Framed.pm',         # finds \$VERSION
     AUTHOR       => 'Felipe Gasper',
