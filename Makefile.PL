@@ -37,6 +37,7 @@ WriteMakefile1(
     META_MERGE => {
         'meta-spec' => { version => 2 },
         resources   => {
+            bugtracker => 'https://github.com/chansen/p5-IO-Framed/issues',
             repository => {
                 type => 'git',
                 url  => 'https://github.com/FGasper/p5-IO-Framed.git',

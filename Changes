@@ -1,6 +1,6 @@
 Revision history for Perl module IO::Framed
 
-0.12
+0.12 Fri Aug 24 2018
     - Add read_until() method.
 
 0.11 Sun Aug 12 2018
