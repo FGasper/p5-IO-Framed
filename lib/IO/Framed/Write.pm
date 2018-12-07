@@ -100,6 +100,7 @@ sub forget_write_queue {
 
 sub WRITE {
     require IO::SigGuard;
+    IO::SigGuard->import('syswrite');   # Needed for IO::SigGuard 0.13+
     *WRITE = *IO::SigGuard::syswrite;
     goto &WRITE;
 }

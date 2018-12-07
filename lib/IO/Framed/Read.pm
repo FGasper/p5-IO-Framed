@@ -34,6 +34,7 @@ sub allow_empty_read {
 
 sub READ {
     require IO::SigGuard;
+    IO::SigGuard->import('sysread');
     *READ = *IO::SigGuard::sysread;
     goto &READ;
 }

@@ -1,5 +1,8 @@
 Revision history for Perl module IO::Framed
 
+0.15 Thu Dec 6 2018
+    - Accommodate IO::SigGuard 0.13’s lazy-loading.
+
 0.14 Fri Aug 24 2018
     - Fix LICENSE file (again)
 
