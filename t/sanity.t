@@ -1,4 +1,5 @@
 use Test::More;
+use Test::FailWarnings;
 
 plan tests => 8;
 

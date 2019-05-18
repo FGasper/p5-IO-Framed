@@ -3,10 +3,10 @@ use warnings;
 use autodie;
 
 use Test::More;
-use Test::NoWarnings;
+use Test::FailWarnings;
 use Test::Exception;
 
-plan tests => 1 + 14;
+plan tests => 14;
 
 use IO::Framed::Write;
 

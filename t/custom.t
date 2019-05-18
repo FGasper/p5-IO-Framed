@@ -2,6 +2,7 @@ use strict;
 use warnings;
 
 use Test::More;
+use Test::FailWarnings;
 
 plan tests => 2;
 

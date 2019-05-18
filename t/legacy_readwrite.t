@@ -6,6 +6,7 @@ BEGIN {
 }
 
 use Test::More;
+use Test::FailWarnings;
 
 plan tests => 4;
 

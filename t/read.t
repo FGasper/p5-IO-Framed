@@ -2,6 +2,7 @@ use strict;
 use warnings;
 
 use Test::More;
+use Test::FailWarnings;
 
 plan tests => 9;
 
@@ -52,7 +53,10 @@ is( $rdr->read(2), q<>, 'allow_empty_read() works as expected' );
 
 close $r;
 
-eval { $rdr->read(2) };
+eval {
+    local $SIG{'__WARN__'} = sub {};
+    $rdr->read(2);
+};
 
 is( $@->errno_is('EBADF'), 1, '… is EAGAIN' ) or diag explain [ $@->get('OS_ERROR'), 0 + $@->get('OS_ERROR') ];
 

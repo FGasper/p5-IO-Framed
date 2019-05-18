@@ -3,6 +3,7 @@ use warnings;
 use autodie;
 
 use Test::More;
+use Test::FailWarnings;
 
 plan tests => 7;
 
