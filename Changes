@@ -1,5 +1,9 @@
 Revision history for Perl module IO::Framed
 
+0.16 Sat May 18 2019
+    - No production changes.
+    - Replace Test::NoWarnings with Test::FailWarnings.
+
 0.15 Thu Dec 6 2018
     - Accommodate IO::SigGuard 0.13’s lazy-loading.
 
